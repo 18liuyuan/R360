@@ -1,0 +1,14 @@
+{
+  "name": "aoa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "gimo",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.14.1"
+  }
+}
