@@ -9,6 +9,10 @@
   "author": "gimo",
   "license": "ISC",
   "devDependencies": {
-    "express": "^4.14.1"
+    "express": "^4.14.1",
+    "mysql": "^2.13.0"
+  },
+  "dependencies": {
+    "mysql": "^2.13.0"
   }
 }
