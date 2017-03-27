@@ -186,7 +186,7 @@ $(function () {
 
         $.ajax({
             type: "GET",
-            url: "/api/get_report_data",
+            url: "/api/get_report_data?station=CHZ&prod_code=P",
             dataType:"json",
             data: {},
             success: function(msg){

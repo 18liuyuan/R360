@@ -75,9 +75,63 @@ DataBase.prototype.start = function(cb){
     }
 }
 
+DataBase.prototype.get_query_sql = function(param){
+    var sql1 = "SELECT DATE_FORMAT( prd_end_dt, '%Y-%m') as prd_end_date, SUM(charge), SUM(ex_charge), SUM(discount) from o_detail GROUP BY DATE_FORMAT( prd_end_dt, '%Y-%m') ";
+    var sql2 = 'select * , SUM(weight) as total_weight ,   date_format(ship_date,"%Y-%m-%d") as ship_date_out  FROM o_detail GROUP BY ship_date';
+
+    var sql="";
+    if(param.qtype === "it"){
+
+    } else if(param.qtype === "ot"){
+
+    } else if(param.qtype === "ot"){
+
+    }
+    return sql;
+}
+
+
+
+DataBase.prototype.get_irecord = function(param, cb){
+     var sql = "select a.*,b.station from i_detail  a left join acct b on a.bill_acct=b.acct_no where true";
+     if(param && param.station && param.station!== "all"){
+         sql = sql + " and b.station='"+ param.station+"'";
+     }
+
+      if(param && param.prod_code && param.prod_code!== "all"){
+         sql = sql + " and a.prod_code = '"+ param.prod_code + "'";
+     }
+     
+    
+    this._connection.query(sql, function(err, result){
+        console.log(JSON.stringify(result));
+        if(!cb){
+            return ;
+        }
+        var retObj = {};
+        if(err){
+            retObj.result = -10;
+            retObj.message = 'query database failure';
+        } else {
+            retObj.result = 0;
+            retObj.data = result;
+        }
+        cb(retObj);
+
+    });
+}
+
 
 DataBase.prototype.get_report_data = function(param, cb){
-    this._connection.query('select * , SUM(weight) as total_weight ,   date_format(ship_date,"%Y-%m-%d") as ship_date_out  FROM airbill GROUP BY ship_date', function(err, result){
+
+   
+   
+    if(!param){
+        return cb({result : -11,
+            message : 'client request param error.'});
+    }
+    var sql = getQuerySql(param);
+    this._connection.query(sql, function(err, result){
         console.log(JSON.stringify(result));
         if(!cb){
             return ;
