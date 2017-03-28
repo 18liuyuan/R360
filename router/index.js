@@ -29,7 +29,7 @@ router.get('/api/get_report_data', function(req, res){
             message : 'database not connected.'
         });
     } else {
-        db.get_irecord(req.query, function(data){
+        db.get_act(req.query, function(data){
             res.send(data);
         });
     }

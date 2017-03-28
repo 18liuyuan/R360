@@ -79,48 +79,24 @@ $(function () {
                
                 singleSelect: true,
                 columns: [[{
-                    title: "运单编号",
-                    field: "airbill_number",
+                    title: "月份",
+                    field: "month_name",
                     width: 100
                 },{
-                    title: "始发地",
-                    field: "orig",
-                    width: 100
-                }, {
-                    title: "目的地",
-                    field: "dest",
-                    width: 100
-                }, {
-                    title: "产品类型",
-                    field: "prod_code",
-                    width: 100
-                },{
-                    title: "ship日期",
-                    field: "ship_date_out",
-                    width: 200
-                },{
-                    title: "总重量",
-                    field: "total_weight",
-                    width: 100
-                },{
-                    title: "收款账户",
-                    field: "bill_acct",
-                    width: 100
-                },{
-                    title: "市场价格",
-                    field: "std_charge",
-                    width: 100
-                },{
-                    title: "成交价格",
+                    title: "charge",
                     field: "charge",
                     width: 100
-                },{
-                    title: "附加费",
+                }, {
+                    title: "ex_charge",
                     field: "ex_charge",
                     width: 100
                 },{
-                    title: "支付方式",
-                    field: "pay_type",
+                    title: "discount",
+                    field: "discount",
+                    width: 200
+                },{
+                    title: "total_charge",
+                    field: "total_charge",
                     width: 100
                 }]],
                 onClickRow: function (rowIndex) {  
@@ -144,10 +120,11 @@ $(function () {
         // 指定图表的配置项和数据
         var option = {
             title: {
-                text: '2017年3月销量',
+                text: '2017年APT',
                 textAlign : 'center',
                 x :'left',
-                y : 'top'
+                y : 'top',
+                left : 100
             },
             tooltip: {},
             grid:{
@@ -157,7 +134,7 @@ $(function () {
                 top : 50,
                 data:[
                     {
-                        name:'销量'
+                        name:'ACT'
                     }
                     ]
                 },
@@ -166,7 +143,7 @@ $(function () {
             },
             yAxis: {},
             series: [{
-                name: '销量',
+                name: 'ACT',
                 type: 'bar',
                
                 itemStyle: {
@@ -217,7 +194,7 @@ $(function () {
 
             var option = {
                 series: [{
-                    name: '销量',
+                    name: 'ACT',
                     type: 'bar',
                     data: showData,
                     itemStyle: {
