@@ -3,83 +3,13 @@ $(function () {
     function getDaysOfMonth(year, month){
         return 32-new Date(year,month,32).getDate();
     }
-    var testData1=[
-        {
-            "id" : 1,
-            "month" : "一月",
-            "totle" : 200
-        },
-        {
-            "id" : 2,
-            "month" : "二月",
-            "totle" : 232
-        },
-         {
-            "id" : 3,
-            "month" : "三月",
-            "totle" : 100
-        },
-         {
-            "id" : 4,
-            "month" : "四月",
-            "totle" : 454
-        },
-         {
-            "id" : 5,
-            "month" : "五月",
-            "totle" : 900
-        },
-         {
-            "id" : 6,
-            "month" : "六月",
-            "totle" : 520
-        },
-         {
-            "id" : 7,
-            "month" : "七月",
-            "totle" : 482
-        },
-         {
-            "id" : 8,
-            "month" : "八月",
-            "totle" : 502
-        },
-         {
-            "id" : 9,
-            "month" : "九月",
-            "totle" : 1000
-        },
-         {
-            "id" : 10,
-            "month" : "十月",
-            "totle" : 256
-        },
-         {
-            "id" : 11,
-            "month" : "十一月",
-            "totle" : 842
-        },
-         {
-            "id" : 12,
-            "month" : "十二月",
-            "totle" : 464
-        }
-    ]
-
-
-    var cat = [];
-    var seri = [];
-    for(var j in  testData1){
-       cat.push(testData1[j]["month"]);
-       seri.push(testData1[j]["totle"]);
-    }
+   
 
      $("#table").datagrid({
-               
-               
                 singleSelect: true,
+                toolbar : "#tb",
                 columns: [[{
-                    title: "月份",
+                    title: "month",
                     field: "month_name",
                     width: 100
                 },{
@@ -98,6 +28,17 @@ $(function () {
                     title: "total_charge",
                     field: "total_charge",
                     width: 100
+                },{
+                    title: "rev",
+                    field: "rev",
+                    width: 100
+                },{
+                    title: "ach",
+                    field: "ach",
+                    width: 100,
+                    formatter: function(value, row, index){                     
+                            return ''+value+'%';                    
+                    }
                 }]],
                 onClickRow: function (rowIndex) {  
                    
@@ -120,7 +61,7 @@ $(function () {
         // 指定图表的配置项和数据
         var option = {
             title: {
-                text: '2017年APT',
+                text: 'Achieve Trend',
                 textAlign : 'center',
                 x :'left',
                 y : 'top',
@@ -135,6 +76,9 @@ $(function () {
                 data:[
                     {
                         name:'ACT'
+                    },
+                     {
+                        name:'AOP'
                     }
                     ]
                 },
@@ -148,7 +92,48 @@ $(function () {
                
                 itemStyle: {
                     normal :  {
-                         color: 'rgb(164,205,238)'
+                         color: 'rgb(164,205,238)',
+                         label: {
+                                            show: true,
+                                            position: 'top',
+                                            textStyle: {
+                                                color: '#615a5a'
+                                             }
+                         },
+                        formatter:function(params){
+                            if(params.value==0){
+                                return '';
+                            }else
+                            {
+                                return params.value;
+                            }
+                        }
+
+                    }
+                }
+            },
+            {
+                name: 'AOP',
+                type: 'bar',
+               
+                itemStyle: {
+                    normal :  {
+                         color: 'rgb(164,205,0)',
+                        label: {
+                            show: true,
+                            position: 'top',
+                            textStyle: {
+                            color: '#615a5a'
+                    }
+                         },
+                        formatter:function(params){
+                            if(params.value==0){
+                                return '';
+                            }else
+                            {
+                                return params.value;
+                            }
+                        }
                     }
                 }
             }]
@@ -186,20 +171,30 @@ $(function () {
                 rows : data
             });
 
-            var showData = [];
-          
+            var actData = [];
+           var aopData = [];
                 for(var j in  data){
-                    showData.push(data[j]["total_weight"]);
+                    actData.push(data[j]["total_charge"]);
+                    aopData.push(data[j]["rev"]);
                 }
 
             var option = {
                 series: [{
                     name: 'ACT',
                     type: 'bar',
-                    data: showData,
+                    data: actData,
                     itemStyle: {
                         normal :  {
                                 color: 'rgb(164,205,238)'
+                        }
+                    }
+                  },{
+                    name: 'AOP',
+                    type: 'bar',
+                    data: aopData,
+                    itemStyle: {
+                        normal :  {
+                                color: 'rgb(164,205,0)'
                         }
                     }
                   }]
@@ -209,5 +204,131 @@ $(function () {
         }
 
 
+  
+        // function initStccodeFilter(){
+        //     $('#stccode').combo({
+		// 		required:false,
+		// 		editable:false,
+        //         multiple:false
+		// 	});
+		// 	$('#stccode-panel').appendTo($('#stccode').combo('panel'));
+			
+       
+        //     $.ajax({
+        //             type: "GET",
+        //             url: "/api/get_stccode",
+        //             dataType:"json",
+        //             data: {},
+        //             success: function(msg){
+        //                 myChart.hideLoading();
+        //                 if(msg.result == 0){
+                        
+        //                     for(var i in msg.data){
+        //                         var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].sales_cd+"</span><br/>";
+        //                         $("#stccode-option").append(option);
+        //                     }
+        //                     $('#stccode-panel input').click(function(){
+        //                         var v = $(this).val();
+        //                         var s = $(this).next('span').text();
+        //                         $('#stccode').combo('setValue', v).combo('setText', s).combo('hidePanel');
+        //                     });
+        //                 } else {
+        //                     alert('get stccode options failure.');
+        //                 }
+        //             },
+        //             error: function(){
+        //                 alert('get stccode options failure.');
+        //             }
+        //         });
+
+        // }
+
+        // function initStationFilter(){
+        //     $('#station').combo({
+        //                 required:true,
+        //                 multiple:true
+        //             });
+        //             $('#station-panel').appendTo($('#station').combo('panel'));
+                  
+        //             $.ajax({
+        //                     type: "GET",
+        //                     url: "/api/get_station",
+        //                     dataType:"json",
+        //                     data: {},
+        //                     success: function(msg){
+        //                         myChart.hideLoading();
+        //                         if(msg.result == 0){
+                                
+                            
+                                
+        //                             for(var i in msg.data){
+        //                                 var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].station+"</span><br/>";
+        //                                 $("#station-option").append(option);
+
+        //                             }
+        //                               $('#station-panel input').click(function(){
+        //                             var v = $(this).val();
+        //                             var s = $(this).next('span').text();
+        //                             $('#station').combo('setValue', v).combo('setText', s).combo('hidePanel');
+        //                         });
+        //                         } else {
+                                    
+        //                         }
+        //                     },
+        //                     error: function(){
+        //                         alert('保存时出错！请刷新重新发布。');
+        //                     }
+        //                 });
+        // }
+            
+            // function initOProdCodeFilter(){
+            //     $("#oprodcode").combotree({
+            //             valueField: "id", //Value字段
+            //             textField: "text",//Text字段
+            //             require : true,
+            //             multiple: true,
+            //             panelHeight: 'auto',
+            //             data: [{
+            //                 id: 1,
+            //                 text: '全选',
+            //                 children: [{
+            //                     id: 11,
+            //                     text: 'Java'
+            //                 },{
+            //                     id: 12,
+            //                     text: 'C++'
+            //                 }]
+            //             }], //数据源
+            //             onClick: function (node, checked) {
+            //             //让全选不显示
+            //             $("#oprodcode").combotree("setText", $("oprodcode").combobox("getText").toString().replace("全选,", ""));
+            //             }
+            //         });
+            // }
+
+      
+
+     // initStccodeFilter();
+       // initStationFilter();
+      //  initOProdCodeFilter();
+            
+            
+    //    $('#stccode').combo({
+    //                     required:true,
+    //                     multiple:true
+    //                 });
+    //        $('#stccode-panel').appendTo($('#stccode').combo('panel'));
+    //          $('#stccode-panel input').click(function(){
+    //                                 var v = $(this).val();
+    //                                 var s = $(this).next('span').text();
+    //                                 $('#stccode').combo('setValue', v).combo('setText', s).combo('hidePanel');
+    //                             });
+    
         
+
+
+
+   
+
+            
 });

@@ -22,6 +22,34 @@ router.get('/report', function(req, res){
     res.redirect('report.html');
 });
 
+
+router.get('/api/get_station', function(req, res){
+     if(!dbConnected){
+        res.send({
+            result : -1,
+            message : 'database not connected.'
+        });
+    } else {
+        db.get_station(req.query, function(data){
+            res.send(data);
+        });
+    }
+});
+
+
+router.get('/api/get_stccode', function(req, res){
+     if(!dbConnected){
+        res.send({
+            result : -1,
+            message : 'database not connected.'
+        });
+    } else {
+        db.get_stccode(req.query, function(data){
+            res.send(data);
+        });
+    }
+});
+
 router.get('/api/get_report_data', function(req, res){
     if(!dbConnected){
         res.send({
