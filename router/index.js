@@ -50,7 +50,7 @@ router.get('/api/get_stccode', function(req, res){
     }
 });
 
-router.get('/api/get_report_data', function(req, res){
+router.get('/api/get_act', function(req, res){
     if(!dbConnected){
         res.send({
             result : -1,

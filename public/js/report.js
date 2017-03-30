@@ -5,62 +5,45 @@ $(function () {
     }
    
 
-     $("#table").datagrid({
-                singleSelect: true,
-                toolbar : "#tb",
-                columns: [[{
-                    title: "month",
-                    field: "month_name",
-                    width: 100
-                },{
-                    title: "charge",
-                    field: "charge",
-                    width: 100
-                }, {
-                    title: "ex_charge",
-                    field: "ex_charge",
-                    width: 100
-                },{
-                    title: "discount",
-                    field: "discount",
-                    width: 200
-                },{
-                    title: "total_charge",
-                    field: "total_charge",
-                    width: 100
-                },{
-                    title: "rev",
-                    field: "rev",
-                    width: 100
-                },{
-                    title: "ach",
-                    field: "ach",
-                    width: 100,
-                    formatter: function(value, row, index){                     
-                            return ''+value+'%';                    
+    /*从服务器获取数据 */
+    function getReportData(param){
+        $.ajax({
+                type: "GET",
+                url: "/api/get_act",
+                dataType:"json",
+                data: param,
+                success: function(msg){
+                    myChart.hideLoading();
+                    if(msg.result == 0){
+                        updateReportData(msg.data);
+                    } else {
+                        alert(msg.message);
                     }
-                }]],
-                onClickRow: function (rowIndex) {  
-                   
-                }  
-
+                },
+                error: function(){
+                    alert('获取数据失败。');
+                }
             });
-
-    //$("#table").loading({ msg: "正在加载...", topMost: true });
-
-    var month_date = [];
-
-    var cnt = getDaysOfMonth(2017,3);
-    for(var i=0;i<12;i++){
-        month_date.push((i+1)+"月");
     }
 
- // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
 
-        // 指定图表的配置项和数据
+   /**把获取到的数据显示在页面里面 */
+    function updateReportData(data){
+
+        $("#table").datagrid('loadData', {
+            total : data.length,
+            rows : data
+        });
+
+        var actData = [];
+        var aopData = [];
+            for(var j in  data){
+                actData.push(data[j]["total_charge"]);
+                aopData.push(data[j]["rev"]);
+            }
+
         var option = {
-            title: {
+             title: {
                 text: 'Achieve Trend',
                 textAlign : 'center',
                 x :'left',
@@ -89,119 +72,38 @@ $(function () {
             series: [{
                 name: 'ACT',
                 type: 'bar',
-               
+                data: actData,
                 itemStyle: {
                     normal :  {
-                         color: 'rgb(164,205,238)',
-                         label: {
-                                            show: true,
-                                            position: 'top',
-                                            textStyle: {
-                                                color: '#615a5a'
-                                             }
-                         },
-                        formatter:function(params){
-                            if(params.value==0){
-                                return '';
-                            }else
-                            {
-                                return params.value;
+                            color: 'rgb(164,205,238)',
+                            label : {
+                                show : true,
+                                position: 'top'
                             }
-                        }
-
                     }
                 }
-            },
-            {
+                },{
                 name: 'AOP',
                 type: 'bar',
-               
+                data: aopData,
                 itemStyle: {
                     normal :  {
-                         color: 'rgb(164,205,0)',
-                        label: {
-                            show: true,
-                            position: 'top',
-                            textStyle: {
-                            color: '#615a5a'
-                    }
-                         },
-                        formatter:function(params){
-                            if(params.value==0){
-                                return '';
-                            }else
-                            {
-                                return params.value;
+                            color: 'rgb(164,205,0)',
+                            label : {
+                                show : true,
+                                position: 'top'
                             }
-                        }
                     }
                 }
-            }]
+                }]
         };
 
-        // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
-        myChart.showLoading({
-        　　text : 'loading',
-        　　effect : 'whirling' 
-        });
 
-        $.ajax({
-            type: "GET",
-            url: "/api/get_report_data?station=CHZ&prod_code=P",
-            dataType:"json",
-            data: {},
-            success: function(msg){
-                myChart.hideLoading();
-                if(msg.result == 0){
-                    updateReportData(msg.data);
-                } else {
-                    alert(msg.message);
-                }
-            },
-            error: function(){
-                alert('保存时出错！请刷新重新发布。');
-            }
-        });
-
-        function updateReportData(data){
-
-            $("#table").datagrid('loadData', {
-                total : data.length,
-                rows : data
-            });
-
-            var actData = [];
-           var aopData = [];
-                for(var j in  data){
-                    actData.push(data[j]["total_charge"]);
-                    aopData.push(data[j]["rev"]);
-                }
-
-            var option = {
-                series: [{
-                    name: 'ACT',
-                    type: 'bar',
-                    data: actData,
-                    itemStyle: {
-                        normal :  {
-                                color: 'rgb(164,205,238)'
-                        }
-                    }
-                  },{
-                    name: 'AOP',
-                    type: 'bar',
-                    data: aopData,
-                    itemStyle: {
-                        normal :  {
-                                color: 'rgb(164,205,0)'
-                        }
-                    }
-                  }]
-            };
-
-            myChart.setOption(option);
-        }
+        option.series[0].type = 'line';
+        option.series[1].type = 'line';
+        lineReport.setOption(option);
+    }
 
 
     
@@ -209,39 +111,39 @@ $(function () {
         
 
 
-        function initStccodeFilter(){
-            $('#stccode').combo({
-                    required:false,
-                    editable:false
-                });
+    function initStccodeFilter(){
+        $('#stccode').combo({
+                required:false,
+                editable:false
+            });
 
-            $('#stccode-panel').appendTo($('#stccode').combo('panel'));
-                $.ajax({
-                        type: "GET",
-                        url: "/api/get_stccode",
-                        dataType:"json",
-                        data: {},
-                        success: function(msg){
-                            myChart.hideLoading();
-                            if(msg.result == 0){
-                            
-                                for(var i in msg.data){
-                                    var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].sales_cd+"</span><br/>";
-                                    $("#stccode-panel").append(option);
-                                }
-                                $('#stccode-panel input').click(function(){
-                                    var v = $(this).val();
-                                    var s = $(this).next('span').text();
-                                    $('#stccode').combo('setValue', v).combo('setText', s).combo('hidePanel');
-                                });
-                            } else {
-                                alert('get stccode options failure.');
+        $('#stccode-panel').appendTo($('#stccode').combo('panel'));
+            $.ajax({
+                    type: "GET",
+                    url: "/api/get_stccode",
+                    dataType:"json",
+                    data: {},
+                    success: function(msg){
+                        myChart.hideLoading();
+                        if(msg.result == 0){
+                        
+                            for(var i in msg.data){
+                                var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].sales_cd+"</span><br/>";
+                                $("#stccode-panel").append(option);
                             }
-                        },
-                        error: function(){
+                            $('#stccode-panel input').click(function(){
+                                var v = $(this).val();
+                                var s = $(this).next('span').text();
+                                $('#stccode').combo('setValue', v).combo('setText', s).combo('hidePanel');
+                            });
+                        } else {
                             alert('get stccode options failure.');
                         }
-                    });
+                    },
+                    error: function(){
+                        alert('get stccode options failure.');
+                    }
+                });
 		}
 
 
@@ -259,10 +161,11 @@ $(function () {
                     data: {},
                     success: function(msg){
                         myChart.hideLoading();
+                        lineReport.hideLoading();
                         if(msg.result == 0){
                         
                             for(var i in msg.data){
-                                var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].station+"</span><br/>";
+                                var option = "<input type='radio' name='lang value='"+ msg.data[i].station +"'><span>"+msg.data[i].station+"</span><br/>";
                                 $("#station-panel").append(option);
                             }
                             $('#station-panel input').click(function(){
@@ -315,15 +218,132 @@ $(function () {
 
             });
 		}
-	   
+
+
+
+
+     function initOProdCodeFilter(){
+            $('#oprodcode').combo({
+                    required:false,
+                    editable:false
+                });
+
+            $('#oprodcode-panel').appendTo($('#oprodcode').combo('panel'));
+            var data = ['L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8','B', 'G', 'N'];
+            for(var i in data){
+                 var option = "<input type='checkbox' name='lang value='02'><span>"+data[i]+"</span><br/>";
+                 $("#oprodcode-panel").append(option);
+            }
+            $('#oprodcode-panel input').click(function(){
+                         var selectedData="";
+                $("#oprodcode-panel input").each(function(){
+                 
+                   if($(this)[0].checked){
+                       var curData = $(this).next('span').text();
+                       if(selectedData.length  == 0){
+                            selectedData+=curData;
+                       } else {
+                            selectedData = selectedData +","+curData;
+                       }
+                   }
+                });
+                $('#oprodcode').combo('setText', selectedData);
+               
+            });
+		}
+
         
+     $("#table").datagrid({
+                singleSelect: true,
+                toolbar : "#tb",
+                columns: [[{
+                    title: "month",
+                    field: "month_name",
+                    width: 100
+                },{
+                    title: "charge",
+                    field: "charge",
+                    width: 100
+                }, {
+                    title: "ex_charge",
+                    field: "ex_charge",
+                    width: 100
+                },{
+                    title: "discount",
+                    field: "discount",
+                    width: 200
+                },{
+                    title: "total_charge",
+                    field: "total_charge",
+                    width: 100
+                },{
+                    title: "rev",
+                    field: "rev",
+                    width: 100
+                },{
+                    title: "ach",
+                    field: "ach",
+                    width: 100,
+                    formatter: function(value, row, index){                     
+                            return ''+value+'%';                    
+                    }
+                }]],
+                onClickRow: function (rowIndex) {  
+                   
+                }  
+
+            });
+
+     $("#btn-query").click(function(){
+            
+           var station = $('#station').combo('getText');
+           var stccode =  $('#stccode').combo('getText'); 
+           var iprodcode = $('#iprodcode').combo('getText'); 
+           var oprodcode = $('#oprodcode').combo('getText'); 
+            getReportData({
+                station : station.trim(),
+                stccode : stccode.trim(),
+                iprodcode : iprodcode.trim(),
+                oprodcode : oprodcode.trim()
+
+            });
+
+        });
 
 
+    //$("#table").loading({ msg: "正在加载...", topMost: true });
 
-    initStccodeFilter();
-    initStationFilter();
-    initIProdCodeFilter();
-   
+    var month_date = [];
+
+    var cnt = getDaysOfMonth(2017,3);
+    for(var i=0;i<12;i++){
+        month_date.push((i+1)+"月");
+    }
+
+    // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        var lineReport = echarts.init(document.getElementById('line-report'));
+
+        myChart.showLoading({
+        　　text : 'loading',
+        　　effect : 'whirling' 
+        });
+
+        lineReport.showLoading({
+        　　text : 'loading',
+        　　effect : 'whirling' 
+        });
+
+        initStccodeFilter();
+        initStationFilter();
+        initIProdCodeFilter();
+        initOProdCodeFilter();
+
+        getReportData({});
+       
+
+    
 
             
 });

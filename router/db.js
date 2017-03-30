@@ -165,9 +165,61 @@ DataBase.prototype.get_stccode = function(param, cb){
 
 DataBase.prototype.get_act = function(param, cb){
  
+    console.log(JSON.stringify(param));
+    var oWhere = " true and b.sales_cd='CHG'   and a.pay_type in ('C', 'R', 'N') ";
+    var iWhere = " true and b.sales_cd='CHG'   and a.pay_type in ('E')";
+//and a.prod_code in ('L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'N')
+// and a.prod_code in ('L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'B', 'G','N')
+    
+     if(param && param.station && param.station!=="" ){
+         oWhere = oWhere + " and b.station='"+ param.station+"'";
+         iWhere = iWhere + " and b.station='"+ param.station+"'";
+     }
 
-    var oWhere = " true and b.sales_cd='CHG' and a.prod_code in ('L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'B', 'G','N') and a.pay_type in ('C', 'R', 'N') ";
-    var iWhere = " true and b.sales_cd='CHG' and a.prod_code in ('L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'N')  and a.pay_type in ('E')";
+
+      if(param && param.stccode && param.stccode!== ""){
+            oWhere = oWhere + " and b.sales_cd='"+ param.stccode+"'";
+            iWhere = iWhere + " and b.sales_cd='"+ param.stccode+"'";
+         
+     }
+
+      if(param && param.iprodcode && param.iprodcode!== ""){
+           var prodCode = "(";
+           var tmp = param.iprodcode.split(",");
+           for(var i=0;i<tmp.length;i++){
+               if(i==0){
+                    prodCode = prodCode + "'" + tmp[i] + "'";
+               } else {
+                    prodCode = prodCode+", '"+tmp[i]+ "'";
+               }
+              
+           }
+           prodCode += ")";
+           
+            iWhere = iWhere + " and a.prod_code in"+ prodCode;
+            //iWhere = iWhere + " and a.prod_code in"+ param.iprodcode;
+         
+     }
+
+
+    if(param && param.oprodcode && param.oprodcode!== ""){
+           var prodCode = "(";
+           var tmp = param.oprodcode.split(",");
+           for(var i=0;i<tmp.length;i++){
+               if(i==0){
+                    prodCode = prodCode + "'" + tmp[i] + "'";
+               } else {
+                    prodCode = prodCode+", '"+tmp[i]+ "'";
+               }
+              
+           }
+           prodCode += ")";
+           
+            oWhere = oWhere + " and a.prod_code in"+ prodCode;
+            //iWhere = iWhere + " and a.prod_code in"+ param.iprodcode;
+         
+     }
+
 
      var sqlo = "select 'o' as iotype ,DATE_FORMAT(prd_end_dt,'%Y-%m') as month_name, a.charge ,a.ex_charge, b.station ,b.sales_cd, a.discount as discount, \
     (a.charge+a.ex_charge-discount) as final_charge from o_detail  a left join acct b on a.ship_acct=b.acct_no where " + oWhere;
@@ -182,24 +234,15 @@ DataBase.prototype.get_act = function(param, cb){
 
      var finalSql = "SELECT ACT.*, AOP.rev, FORMAT(ACT.total_charge*100/AOP.rev,1) as ach from (" + querySql + ") ACT LEFT JOIN(SELECT *, DATE_FORMAT(`month`, '%Y-%m') as month_name FROM mraop) AOP ON ACT.month_name = AOP.month_name";
 
-     var sql;
-     if(param && param.station && param.station!== "all"){
-         sql = sql + " and b.station='"+ param.station+"'";
-     }
+  
 
-      if(param && param.sales_cd && param.sales_cd!== "all"){
-         sql = sql + " and b.sales_cd='"+ param.sales_cd+"'";
-     }
-
-    if(param && param.prod_code && param.prod_code!== "all"){
-         sql = sql + " and a.prod_code = '"+ param.prod_code + "'";
-     }
+  
 
     //sql = sql + "and a.pay_type in()"
      
     
     this._connection.query(finalSql, function(err, result){
-        console.log(JSON.stringify(result));
+       // console.log(JSON.stringify(result));
         if(!cb){
             return ;
         }
@@ -217,32 +260,32 @@ DataBase.prototype.get_act = function(param, cb){
 }
 
 
-DataBase.prototype.get_report_data = function(param, cb){
+// DataBase.prototype.get_report_data = function(param, cb){
 
    
    
-    if(!param){
-        return cb({result : -11,
-            message : 'client request param error.'});
-    }
-    var sql = getQuerySql(param);
-    this._connection.query(sql, function(err, result){
-        console.log(JSON.stringify(result));
-        if(!cb){
-            return ;
-        }
-        var retObj = {};
-        if(err){
-            retObj.result = -10;
-            retObj.message = 'query database failure';
-        } else {
-            retObj.result = 0;
-            retObj.data = result;
-        }
-        cb(retObj);
+//     if(!param){
+//         return cb({result : -11,
+//             message : 'client request param error.'});
+//     }
+//     var sql = getQuerySql(param);
+//     this._connection.query(sql, function(err, result){
+//         console.log(JSON.stringify(result));
+//         if(!cb){
+//             return ;
+//         }
+//         var retObj = {};
+//         if(err){
+//             retObj.result = -10;
+//             retObj.message = 'query database failure';
+//         } else {
+//             retObj.result = 0;
+//             retObj.data = result;
+//         }
+//         cb(retObj);
 
-    });
-}
+//     });
+// }
 
 
 
