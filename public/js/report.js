@@ -3,125 +3,42 @@ $(function () {
     function getDaysOfMonth(year, month){
         return 32-new Date(year,month,32).getDate();
     }
-    var testData1=[
-        {
-            "id" : 1,
-            "month" : "一月",
-            "totle" : 200
-        },
-        {
-            "id" : 2,
-            "month" : "二月",
-            "totle" : 232
-        },
-         {
-            "id" : 3,
-            "month" : "三月",
-            "totle" : 100
-        },
-         {
-            "id" : 4,
-            "month" : "四月",
-            "totle" : 454
-        },
-         {
-            "id" : 5,
-            "month" : "五月",
-            "totle" : 900
-        },
-         {
-            "id" : 6,
-            "month" : "六月",
-            "totle" : 520
-        },
-         {
-            "id" : 7,
-            "month" : "七月",
-            "totle" : 482
-        },
-         {
-            "id" : 8,
-            "month" : "八月",
-            "totle" : 502
-        },
-         {
-            "id" : 9,
-            "month" : "九月",
-            "totle" : 1000
-        },
-         {
-            "id" : 10,
-            "month" : "十月",
-            "totle" : 256
-        },
-         {
-            "id" : 11,
-            "month" : "十一月",
-            "totle" : 842
-        },
-         {
-            "id" : 12,
-            "month" : "十二月",
-            "totle" : 464
-        }
-    ]
-
-
-    var cat = [];
-    var seri = [];
-    for(var j in  testData1){
-       cat.push(testData1[j]["month"]);
-       seri.push(testData1[j]["totle"]);
-    }
+   
 
      $("#table").datagrid({
-               
-               
                 singleSelect: true,
+                toolbar : "#tb",
                 columns: [[{
-                    title: "运单编号",
-                    field: "airbill_number",
+                    title: "month",
+                    field: "month_name",
                     width: 100
                 },{
-                    title: "始发地",
-                    field: "orig",
-                    width: 100
-                }, {
-                    title: "目的地",
-                    field: "dest",
-                    width: 100
-                }, {
-                    title: "产品类型",
-                    field: "prod_code",
-                    width: 100
-                },{
-                    title: "ship日期",
-                    field: "ship_date_out",
-                    width: 200
-                },{
-                    title: "总重量",
-                    field: "total_weight",
-                    width: 100
-                },{
-                    title: "收款账户",
-                    field: "bill_acct",
-                    width: 100
-                },{
-                    title: "市场价格",
-                    field: "std_charge",
-                    width: 100
-                },{
-                    title: "成交价格",
+                    title: "charge",
                     field: "charge",
                     width: 100
-                },{
-                    title: "附加费",
+                }, {
+                    title: "ex_charge",
                     field: "ex_charge",
                     width: 100
                 },{
-                    title: "支付方式",
-                    field: "pay_type",
+                    title: "discount",
+                    field: "discount",
+                    width: 200
+                },{
+                    title: "total_charge",
+                    field: "total_charge",
                     width: 100
+                },{
+                    title: "rev",
+                    field: "rev",
+                    width: 100
+                },{
+                    title: "ach",
+                    field: "ach",
+                    width: 100,
+                    formatter: function(value, row, index){                     
+                            return ''+value+'%';                    
+                    }
                 }]],
                 onClickRow: function (rowIndex) {  
                    
@@ -144,10 +61,11 @@ $(function () {
         // 指定图表的配置项和数据
         var option = {
             title: {
-                text: '2017年3月销量',
+                text: 'Achieve Trend',
                 textAlign : 'center',
                 x :'left',
-                y : 'top'
+                y : 'top',
+                left : 100
             },
             tooltip: {},
             grid:{
@@ -157,7 +75,10 @@ $(function () {
                 top : 50,
                 data:[
                     {
-                        name:'销量'
+                        name:'ACT'
+                    },
+                     {
+                        name:'AOP'
                     }
                     ]
                 },
@@ -166,12 +87,53 @@ $(function () {
             },
             yAxis: {},
             series: [{
-                name: '销量',
+                name: 'ACT',
                 type: 'bar',
                
                 itemStyle: {
                     normal :  {
-                         color: 'rgb(164,205,238)'
+                         color: 'rgb(164,205,238)',
+                         label: {
+                                            show: true,
+                                            position: 'top',
+                                            textStyle: {
+                                                color: '#615a5a'
+                                             }
+                         },
+                        formatter:function(params){
+                            if(params.value==0){
+                                return '';
+                            }else
+                            {
+                                return params.value;
+                            }
+                        }
+
+                    }
+                }
+            },
+            {
+                name: 'AOP',
+                type: 'bar',
+               
+                itemStyle: {
+                    normal :  {
+                         color: 'rgb(164,205,0)',
+                        label: {
+                            show: true,
+                            position: 'top',
+                            textStyle: {
+                            color: '#615a5a'
+                    }
+                         },
+                        formatter:function(params){
+                            if(params.value==0){
+                                return '';
+                            }else
+                            {
+                                return params.value;
+                            }
+                        }
                     }
                 }
             }]
@@ -209,20 +171,30 @@ $(function () {
                 rows : data
             });
 
-            var showData = [];
-          
+            var actData = [];
+           var aopData = [];
                 for(var j in  data){
-                    showData.push(data[j]["total_weight"]);
+                    actData.push(data[j]["total_charge"]);
+                    aopData.push(data[j]["rev"]);
                 }
 
             var option = {
                 series: [{
-                    name: '销量',
+                    name: 'ACT',
                     type: 'bar',
-                    data: showData,
+                    data: actData,
                     itemStyle: {
                         normal :  {
                                 color: 'rgb(164,205,238)'
+                        }
+                    }
+                  },{
+                    name: 'AOP',
+                    type: 'bar',
+                    data: aopData,
+                    itemStyle: {
+                        normal :  {
+                                color: 'rgb(164,205,0)'
                         }
                     }
                   }]
@@ -232,5 +204,126 @@ $(function () {
         }
 
 
+    
+
         
+
+
+        function initStccodeFilter(){
+            $('#stccode').combo({
+                    required:false,
+                    editable:false
+                });
+
+            $('#stccode-panel').appendTo($('#stccode').combo('panel'));
+                $.ajax({
+                        type: "GET",
+                        url: "/api/get_stccode",
+                        dataType:"json",
+                        data: {},
+                        success: function(msg){
+                            myChart.hideLoading();
+                            if(msg.result == 0){
+                            
+                                for(var i in msg.data){
+                                    var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].sales_cd+"</span><br/>";
+                                    $("#stccode-panel").append(option);
+                                }
+                                $('#stccode-panel input').click(function(){
+                                    var v = $(this).val();
+                                    var s = $(this).next('span').text();
+                                    $('#stccode').combo('setValue', v).combo('setText', s).combo('hidePanel');
+                                });
+                            } else {
+                                alert('get stccode options failure.');
+                            }
+                        },
+                        error: function(){
+                            alert('get stccode options failure.');
+                        }
+                    });
+		}
+
+
+        function initStationFilter(){
+            $('#station').combo({
+                    required:false,
+                    editable:false
+                });
+
+            $('#station-panel').appendTo($('#station').combo('panel'));
+            $.ajax({
+                    type: "GET",
+                    url: "/api/get_station",
+                    dataType:"json",
+                    data: {},
+                    success: function(msg){
+                        myChart.hideLoading();
+                        if(msg.result == 0){
+                        
+                            for(var i in msg.data){
+                                var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].station+"</span><br/>";
+                                $("#station-panel").append(option);
+                            }
+                            $('#station-panel input').click(function(){
+                                var v = $(this).val();
+                                var s = $(this).next('span').text();
+                                $('#station').combo('setValue', v).combo('setText', s).combo('hidePanel');
+                            });
+                        } else {
+                            alert('get station options failure.');
+                        }
+                    },
+                    error: function(){
+                        alert('get station options failure.');
+                    }
+                });
+		}
+
+        function initIProdCodeFilter(){
+            $('#iprodcode').combo({
+                    required:false,
+                    editable:false
+                });
+
+            $('#iprodcode-panel').appendTo($('#iprodcode').combo('panel'));
+            var data = ['L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'N'];
+            for(var i in data){
+                 var option = "<input type='checkbox' name='lang value='02'><span>"+data[i]+"</span><br/>";
+                 $("#iprodcode-panel").append(option);
+            }
+            $('#iprodcode-panel input').click(function(){
+                //var v = $(this).val();
+                //var s = $(this).next('span').text();
+                // var text = $('#iprodcode').combo('getText');
+                //$('#iprodcode').combo('setText', text+","+ s).combo('hidePanel');
+                //可以通过两重循环来实现
+                var selectedData="";
+                $("#iprodcode-panel input").each(function(){
+                 
+                   if($(this)[0].checked){
+                       var curData = $(this).next('span').text();
+                       if(selectedData.length  == 0){
+                            selectedData+=curData;
+                       } else {
+                            selectedData = selectedData +","+curData;
+                       }
+                   }
+                });
+                $('#iprodcode').combo('setText', selectedData);
+                //$('#iprodcode').combo('hidePanel');
+
+            });
+		}
+	   
+        
+
+
+
+    initStccodeFilter();
+    initStationFilter();
+    initIProdCodeFilter();
+   
+
+            
 });

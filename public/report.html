@@ -1,23 +1,52 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Basic DateBox - jQuery EasyUI Demo</title>
-    <link rel="stylesheet" type="text/css" href="plugin/jquery-easyui/themes/default/easyui.css">
-    <link rel="stylesheet" type="text/css" href="css/home.css">
+    <head>
+        <meta charset="UTF-8">
+        <title>Basic DateBox - jQuery EasyUI Demo</title>
+        <link rel="stylesheet" type="text/css" href="plugin/jquery-easyui/themes/default/easyui.css">
+        <link rel="stylesheet" type="text/css" href="plugin/jquery-easyui/themes/icon.css">
+        <link rel="stylesheet" type="text/css" href="css/home.css">
 
-    <script type="text/javascript" src="plugin/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="plugin/jquery-easyui/jquery.easyui.min.js"></script>
-    <script type="text/javascript" src="plugin/Highcharts/code/highcharts.js"></script>
-    <script type="text/javascript" src="js/report.js"></script>
-     <script type="text/javascript" src="plugin/ECharts/echarts.common.min.js"></script>
-</head>
+        <script type="text/javascript" src="plugin/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="plugin/jquery-easyui/jquery.easyui.min.js"></script>
+        
+        <script type="text/javascript" src="plugin/Highcharts/code/highcharts.js"></script>
+        <script type="text/javascript" src="js/report.js"></script>
+        <script type="text/javascript" src="plugin/ECharts/echarts.common.min.js"></script>
+    </head>
 
-<body>
-    <div id="table" style="width:100%;text-align: center;padding: 0px;"></div>
-  
-     <div id="main" style="width: 80%;height:600px;margin-top:50px;"></div>
-</body>
+    <body>
+
+        <div id="stccode-panel"></div>
+        <div id="station-panel"></div>
+        <div id="iprodcode-panel">
+            <input type="checkbox" name="lang" value="L"><span> L</span><br/>
+            <input type="checkbox" name="lang" value="T"><span> T</span><br/>
+            <input type="checkbox" name="lang" value="K"><span> K</span><br/>
+            <input type="checkbox" name="lang" value="D"><span> D</span><br/>
+            <input type="checkbox" name="lang" value="7"><span> 7</span><br/>
+            <input type="checkbox" name="lang" value="M"><span> M</span><br/>
+            <input type="checkbox" name="lang" value="Y"><span> Y</span><br/>
+            <input type="checkbox" name="lang" value="E"><span> E</span><br/>
+            <input type="checkbox" name="lang" value="P"><span> P</span><br/>
+            <input type="checkbox" name="lang" value="8"><span> 8</span><br/>
+        </div>
+
+        <div id="tb" style="padding:5px;height:auto"> 
+            Date From: <input id="datefrom" class="easyui-datebox" style="width:100px"/> 
+            To: <input id="dateto" class="easyui-datebox" style="width:100px"/> 
+            Stc Code   <select id="stccode" style="width:150px"></select>
+            Station    <select id="station" style="width:150px"></select>
+            IProd Code <select id="iprodcode" style="width:150px"></select>  
+            <a id="btn-query" class="easyui-linkbutton" iconCls="icon-search">Query</a>
+        </div>
+
+
+        <div id="table" style="width:100%;text-align: center;padding: 0px;"></div>
+
+        <div id="main" style="width: 80%;height:600px;margin-top:50px;"></div>
+
+    </body>
 
 </html>
