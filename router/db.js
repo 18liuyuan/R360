@@ -164,15 +164,7 @@ DataBase.prototype.get_stccode = function(param, cb){
 }
 
 DataBase.prototype.get_act = function(param, cb){
-    /*
-    SELECT AA.month_name, AA.charge, AA.ex_charge, AA.station, AA.discount, AA.final_charge , SUM(AA.final_charge) as total_charge from (
-    select 'o' as iotype ,DATE_FORMAT(prd_end_dt,'%Y-%m') as month_name, a.charge ,a.ex_charge, b.station ,b.sales_cd, a.discount as discount, (a.charge+a.ex_charge-discount) as final_charge from o_detail  a left join acct b on a.ship_acct=b.acct_no where oWhere
-    UNION ALL
-    select 'i' as iotype ,DATE_FORMAT(prd_end_dt,'%Y-%m') as month_name, a.charge, a.ex_charge, b.station ,b.sales_cd, 0 as discount, (a.charge+a.ex_charge-discount) as final_charge from o_detail  a left join acct b on a.ship_acct=b.acct_no where iWhere
-    ) as AA  GROUP BY AA.month_name
-    */
-
-
+ 
 
     var oWhere = " true and b.sales_cd='CHG' and a.prod_code in ('L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'B', 'G','N') and a.pay_type in ('C', 'R', 'N') ";
     var iWhere = " true and b.sales_cd='CHG' and a.prod_code in ('L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'N')  and a.pay_type in ('E')";
@@ -189,17 +181,6 @@ DataBase.prototype.get_act = function(param, cb){
      querySql = querySql+ " UNION ALL " + sqli + ") as AA GROUP BY AA.month_name";
 
      var finalSql = "SELECT ACT.*, AOP.rev, FORMAT(ACT.total_charge*100/AOP.rev,1) as ach from (" + querySql + ") ACT LEFT JOIN(SELECT *, DATE_FORMAT(`month`, '%Y-%m') as month_name FROM mraop) AOP ON ACT.month_name = AOP.month_name";
-//    SELECT ACT.*, AOP.rev from 
-
-// SELECT AA.month_name, SUM(AA.charge) as charge, SUM(AA.ex_charge) as ex_charge , SUM(AA.discount) as discount, SUM(AA.final_charge) as total_charge       from (select 'o' as iotype ,DATE_FORMAT(prd_end_dt,'%Y-%m') as month_name, a.charge ,a.ex_charge, b.station ,b.sales_cd, a.discount as discount,     (a.charge+a.ex_charge-discount) as final_charge from o_detail  a left join acct b on a.ship_acct=b.acct_no where  true and b.sales_cd='CHG' and a.prod_code in ('L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'B', 'G','N') and a.pay_type in ('C', 'R', 'N')  UNION ALL select 'i' as iotype ,DATE_FORMAT(prd_end_dt,'%Y-%m') as month_name, a.charge, a.ex_charge, b.station ,b.sales_cd, 0 as discount,      (a.charge+a.ex_charge-discount) as final_charge from o_detail  a left join acct b on a.ship_acct=b.acct_no where  true and b.sales_cd='CHG' and a.prod_code in ('L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'N')  and a.pay_type in ('E')) as AA GROUP BY AA.month_name
-// ) 
-// ACT
-// LEFT JOIN 
-// (
-// 	SELECT *, DATE_FORMAT(`month`, "%Y-%m") as month_name FROM mraop
-// ) AOP
-
-
 
      var sql;
      if(param && param.station && param.station!== "all"){
@@ -262,6 +243,48 @@ DataBase.prototype.get_report_data = function(param, cb){
 
     });
 }
+
+
+
+DataBase.prototype.get_base_data = function(param, cb){
+
+   
+   
+    if(!param){
+        return cb({result : -11,
+            message : 'client request param error.'});
+    }
+
+    var sql = "";
+    if(param.table === "i_detail"){
+        sql = "select * from  i_detail";
+    } else if(param.table === "o_detail"){
+        sql = "select * from  o_detail";
+    } else if(param.table === "acct"){
+        sql = "select * from  acct";
+    } else {
+          return cb({result : -11,
+            message : 'client request param error.'});
+    }
+
+    this._connection.query(sql, function(err, result){
+        console.log(JSON.stringify(result));
+        if(!cb){
+            return ;
+        }
+        var retObj = {};
+        if(err){
+            retObj.result = -10;
+            retObj.message = 'query database failure';
+        } else {
+            retObj.result = 0;
+            retObj.data = result;
+        }
+        cb(retObj);
+
+    });
+}
+
 
 var dataBaseInstance = new DataBase();
 

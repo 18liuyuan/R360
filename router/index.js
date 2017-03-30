@@ -63,4 +63,18 @@ router.get('/api/get_report_data', function(req, res){
     }
 });
 
+
+router.get('/api/get_base_data', function(req, res){
+    if(!dbConnected){
+        res.send({
+            result : -1,
+            message : 'database not connected.'
+        });
+    } else {
+        db.get_base_data(req.query, function(data){
+            res.send(data);
+        });
+    }
+});
+
 module.exports = router;

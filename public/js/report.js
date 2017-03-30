@@ -204,130 +204,125 @@ $(function () {
         }
 
 
-  
-        // function initStccodeFilter(){
-        //     $('#stccode').combo({
-		// 		required:false,
-		// 		editable:false,
-        //         multiple:false
-		// 	});
-		// 	$('#stccode-panel').appendTo($('#stccode').combo('panel'));
-			
-       
-        //     $.ajax({
-        //             type: "GET",
-        //             url: "/api/get_stccode",
-        //             dataType:"json",
-        //             data: {},
-        //             success: function(msg){
-        //                 myChart.hideLoading();
-        //                 if(msg.result == 0){
-                        
-        //                     for(var i in msg.data){
-        //                         var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].sales_cd+"</span><br/>";
-        //                         $("#stccode-option").append(option);
-        //                     }
-        //                     $('#stccode-panel input').click(function(){
-        //                         var v = $(this).val();
-        //                         var s = $(this).next('span').text();
-        //                         $('#stccode').combo('setValue', v).combo('setText', s).combo('hidePanel');
-        //                     });
-        //                 } else {
-        //                     alert('get stccode options failure.');
-        //                 }
-        //             },
-        //             error: function(){
-        //                 alert('get stccode options failure.');
-        //             }
-        //         });
-
-        // }
-
-        // function initStationFilter(){
-        //     $('#station').combo({
-        //                 required:true,
-        //                 multiple:true
-        //             });
-        //             $('#station-panel').appendTo($('#station').combo('panel'));
-                  
-        //             $.ajax({
-        //                     type: "GET",
-        //                     url: "/api/get_station",
-        //                     dataType:"json",
-        //                     data: {},
-        //                     success: function(msg){
-        //                         myChart.hideLoading();
-        //                         if(msg.result == 0){
-                                
-                            
-                                
-        //                             for(var i in msg.data){
-        //                                 var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].station+"</span><br/>";
-        //                                 $("#station-option").append(option);
-
-        //                             }
-        //                               $('#station-panel input').click(function(){
-        //                             var v = $(this).val();
-        //                             var s = $(this).next('span').text();
-        //                             $('#station').combo('setValue', v).combo('setText', s).combo('hidePanel');
-        //                         });
-        //                         } else {
-                                    
-        //                         }
-        //                     },
-        //                     error: function(){
-        //                         alert('保存时出错！请刷新重新发布。');
-        //                     }
-        //                 });
-        // }
-            
-            // function initOProdCodeFilter(){
-            //     $("#oprodcode").combotree({
-            //             valueField: "id", //Value字段
-            //             textField: "text",//Text字段
-            //             require : true,
-            //             multiple: true,
-            //             panelHeight: 'auto',
-            //             data: [{
-            //                 id: 1,
-            //                 text: '全选',
-            //                 children: [{
-            //                     id: 11,
-            //                     text: 'Java'
-            //                 },{
-            //                     id: 12,
-            //                     text: 'C++'
-            //                 }]
-            //             }], //数据源
-            //             onClick: function (node, checked) {
-            //             //让全选不显示
-            //             $("#oprodcode").combotree("setText", $("oprodcode").combobox("getText").toString().replace("全选,", ""));
-            //             }
-            //         });
-            // }
-
-      
-
-     // initStccodeFilter();
-       // initStationFilter();
-      //  initOProdCodeFilter();
-            
-            
-    //    $('#stccode').combo({
-    //                     required:true,
-    //                     multiple:true
-    //                 });
-    //        $('#stccode-panel').appendTo($('#stccode').combo('panel'));
-    //          $('#stccode-panel input').click(function(){
-    //                                 var v = $(this).val();
-    //                                 var s = $(this).next('span').text();
-    //                                 $('#stccode').combo('setValue', v).combo('setText', s).combo('hidePanel');
-    //                             });
     
+
+        
+
+
+        function initStccodeFilter(){
+            $('#stccode').combo({
+                    required:false,
+                    editable:false
+                });
+
+            $('#stccode-panel').appendTo($('#stccode').combo('panel'));
+                $.ajax({
+                        type: "GET",
+                        url: "/api/get_stccode",
+                        dataType:"json",
+                        data: {},
+                        success: function(msg){
+                            myChart.hideLoading();
+                            if(msg.result == 0){
+                            
+                                for(var i in msg.data){
+                                    var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].sales_cd+"</span><br/>";
+                                    $("#stccode-panel").append(option);
+                                }
+                                $('#stccode-panel input').click(function(){
+                                    var v = $(this).val();
+                                    var s = $(this).next('span').text();
+                                    $('#stccode').combo('setValue', v).combo('setText', s).combo('hidePanel');
+                                });
+                            } else {
+                                alert('get stccode options failure.');
+                            }
+                        },
+                        error: function(){
+                            alert('get stccode options failure.');
+                        }
+                    });
+		}
+
+
+        function initStationFilter(){
+            $('#station').combo({
+                    required:false,
+                    editable:false
+                });
+
+            $('#station-panel').appendTo($('#station').combo('panel'));
+            $.ajax({
+                    type: "GET",
+                    url: "/api/get_station",
+                    dataType:"json",
+                    data: {},
+                    success: function(msg){
+                        myChart.hideLoading();
+                        if(msg.result == 0){
+                        
+                            for(var i in msg.data){
+                                var option = "<input type='radio' name='lang value='02'><span>"+msg.data[i].station+"</span><br/>";
+                                $("#station-panel").append(option);
+                            }
+                            $('#station-panel input').click(function(){
+                                var v = $(this).val();
+                                var s = $(this).next('span').text();
+                                $('#station').combo('setValue', v).combo('setText', s).combo('hidePanel');
+                            });
+                        } else {
+                            alert('get station options failure.');
+                        }
+                    },
+                    error: function(){
+                        alert('get station options failure.');
+                    }
+                });
+		}
+
+        function initIProdCodeFilter(){
+            $('#iprodcode').combo({
+                    required:false,
+                    editable:false
+                });
+
+            $('#iprodcode-panel').appendTo($('#iprodcode').combo('panel'));
+            var data = ['L', 'T', 'K', 'D', '7', 'M', 'Y', 'E', 'P', '8', 'N'];
+            for(var i in data){
+                 var option = "<input type='checkbox' name='lang value='02'><span>"+data[i]+"</span><br/>";
+                 $("#iprodcode-panel").append(option);
+            }
+            $('#iprodcode-panel input').click(function(){
+                //var v = $(this).val();
+                //var s = $(this).next('span').text();
+                // var text = $('#iprodcode').combo('getText');
+                //$('#iprodcode').combo('setText', text+","+ s).combo('hidePanel');
+                //可以通过两重循环来实现
+                var selectedData="";
+                $("#iprodcode-panel input").each(function(){
+                 
+                   if($(this)[0].checked){
+                       var curData = $(this).next('span').text();
+                       if(selectedData.length  == 0){
+                            selectedData+=curData;
+                       } else {
+                            selectedData = selectedData +","+curData;
+                       }
+                   }
+                });
+                $('#iprodcode').combo('setText', selectedData);
+                //$('#iprodcode').combo('hidePanel');
+
+            });
+		}
+	   
         
 
 
 
+    initStccodeFilter();
+    initStationFilter();
+    initIProdCodeFilter();
    
 
             
